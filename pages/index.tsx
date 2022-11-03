@@ -13,7 +13,7 @@ export default function Home() {
         </Heading>
         <Text fontSize="24px">
           Buy, Sell, and Trade NFTs to use in the game{' '}
-          <a href="" target="_blank">
+          <a href="https://jrocca82.github.io/jelly-web3/" target="_blank">
             <em>Jelly Jam</em>
           </a>
           .
