@@ -18,6 +18,7 @@ import {
 import { Jelly } from '../types/jelly'
 import { ConnectionContext } from '../contexts/ConnectionContext'
 import { ethers } from 'ethers'
+import { baseJellyOpenseaLink } from '../constants/contractAddresses'
 
 type JellyModalProps = {
   jelly: Jelly
@@ -27,17 +28,24 @@ const JellyModal = ({ jelly }: JellyModalProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { jellyContract, accounts } = useContext(ConnectionContext)
   const [loading, setLoading] = useState<boolean>(false)
-  const [openSeaLink, setOpenSeaLink] = useState<string>();
-  const baseOpenseaLink = "https://testnets.opensea.io/collection/jellies";
+  const [openSeaLink, setOpenSeaLink] = useState<string>()
 
   const mintJelly = async () => {
     setLoading(true)
     await jellyContract?.mintJellyNFT(jelly.characterIndex)
   }
 
-  const onMint = (jelly: Jelly) => {
+  const onMint = async (jelly: Jelly) => {
     setLoading(false)
-    console.log('JellyNFTMinted', jelly);
+    console.log('JellyNFTMinted', jelly)
+    if (!accounts) {
+      setOpenSeaLink('Error connecting to account')
+    } else {
+      const jellies = await jellyContract?.getUserTokens(accounts[0])
+      setOpenSeaLink(
+        baseJellyOpenseaLink + Number(jellies[jellies.length].tokenId),
+      )
+    }
   }
 
   useEffect(() => {
@@ -85,9 +93,11 @@ const JellyModal = ({ jelly }: JellyModalProps) => {
           </ModalBody>
 
           <ModalFooter justifyContent="space-around" alignItems="center">
-              <Text alignSelf="flex-start" as='u'>
-                <a href={openSeaLink} target="_blank">View Collection on OpenSea</a>
-              </Text>
+            <Text alignSelf="flex-start" as="u">
+              <a href={openSeaLink} target="_blank">
+                View Collection on OpenSea
+              </a>
+            </Text>
 
             <Flex>
               <Button

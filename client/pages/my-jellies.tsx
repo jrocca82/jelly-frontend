@@ -3,8 +3,9 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Flex, Heading, Text, Image } from '@chakra-ui/react'
 import NavBar from '../components/NavBar'
 import { ConnectionContext } from '../contexts/ConnectionContext'
-import truncateEthAddress from 'truncate-eth-address'
 import { Jelly } from '../types/jelly'
+import { baseJellyOpenseaLink } from '../constants/contractAddresses'
+import Link from 'next/link'
 
 const JellyPage: NextPage = () => {
   const { accounts, jellyContract } = useContext(ConnectionContext)
@@ -24,13 +25,20 @@ const JellyPage: NextPage = () => {
   }, [accounts])
 
   return (
-    <Flex flexDir="column" align="center" minHeight="100vh">
+    <Flex flexDir="column" align="center" minHeight="100vh" textAlign="center">
       <NavBar />
+      {!accounts && <Text>Please connect your metamask to see your NFTs.</Text>}
       {accounts && (
         <Flex flexWrap="wrap" justify="space-around" w="80%">
           <Heading w="100%" textAlign="center" my="50px">
             Your NFTs:
           </Heading>
+          {!myJellies && (
+            <Text>
+              You have no jellies! Go to the <Link href="/">Home Page</Link>to
+              mint some!
+            </Text>
+          )}
           {myJellies &&
             myJellies.map((jelly) => {
               return (
@@ -52,13 +60,27 @@ const JellyPage: NextPage = () => {
                     <Text>Character Index: {Number(jelly.characterIndex)}</Text>
                     <Text>Speed: {Number(jelly.speed)}</Text>
                     <Text>Jump Height: {Number(jelly.jumpHeight)}</Text>
+                    <a
+                      href={baseJellyOpenseaLink + Number(jelly.tokenId)}
+                      target="_blank"
+                    >
+                      <Text as="u" color="blue">
+                        View on OpenSea
+                      </Text>
+                    </a>
                   </Flex>
                 </Flex>
               )
             })}
-          <Flex my="50px" flexDir="column" align="center" height="100px" justify="space-around">
+          <Flex
+            my="50px"
+            flexDir="column"
+            align="center"
+            height="100px"
+            justify="space-around"
+          >
             <Text>
-              Game integration coming soon! Check my linked in for updates:{' '}
+              Game integration coming soon! Check my LinkedIn for updates:{' '}
             </Text>
             <a href="https://www.linkedin.com/in/jo-rocca/" target="_blank">
               <Image src="linkedin.png" boxSize={50} />
